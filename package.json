@@ -1,0 +1,20 @@
+{
+  "name": "Bundle",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "rollup": "^1.32.0"
+  },
+  "dependencies": {
+    "d3": "^5.15.0",
+    "nvd3": "^1.8.6"
+  }
+}

@@ -1,0 +1,37 @@
+.nv-point.hover {
+    stroke-width: 10px !important;
+    fill-opacity: 1 !important;
+    stroke-opacity: 0.2 !important;
+}
+
+.nv-group.hover
+{
+  stroke-width: 8px !important;
+  fill-opacity: 0.3 !important;
+    stroke-opacity: 0.3 !important;
+}
+
+.nv-point {
+    stroke-width: 1px !important;
+    fill-opacity: 1 !important;
+    stroke-opacity: 1 !important;
+}
+
+.node {
+    cursor: pointer;
+}
+
+.node circle {
+  stroke: #055a81;
+  stroke-width: 3px;
+}
+
+.node text {
+  font: 12px Arial, Helvetica, sans-serif;
+}
+
+.link {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 2px;
+}

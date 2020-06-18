@@ -1,0 +1,113 @@
+/* Menu */
+
+/* ========================================================================================= */
+
+#block-geoportal {
+	width: 100%;
+	height: 25px;
+	border-bottom: solid 1px #f2f2f2;
+	background: #f6f6f6;
+	line-height: 25px;
+}
+
+#block-geoportal .gpheader__icon_home>a:before {
+	background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAYAAABy6+R8AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAEdJREFUeNpi+P//PwM2fObMmf+45PBpgAHCmtA0YNVIjAYMjcRqQNFIiga4RlI1IKwj1SYmBjIAVTUxwvDZs2dpaxNeABBgAHXDcEhCp1ENAAAAAElFTkSuQmCC') 0 6px no-repeat;
+}
+
+#block-geoportal .gpheader__icon_user>a:before {
+	background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAARCAYAAAACCvahAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAANlJREFUeNpi/P//PwM6aGxsvAqktKDca/X19doMWAATFo2rkTSCgNayZcs+EqUZCELQBW7fvs0HpFYToxkXCKFEM1HO/oUuwMzMTLTmCegCFhYWWA3FprkXXcDS0hKroRiagXH6Cl2Mm5sbq6GMsEQCjF9OIDUPiCNwhM8KIE4CGv4drrmhoYEXSB8BYj1iQpiRkfEA0EJ/oCGfWID8T6RED1CjA5ACpTh+SuL5I8WJ5CCpmuTl5cE0yM/JCQkJq9jY2IyI1czBwQGiDsKiShmIBUh0wAeAAAMADSQ6K3xmL4kAAAAASUVORK5CYII=') 0 5px no-repeat;
+}
+
+#block-geoportal .menu-item--right {
+	float: right;
+}
+
+#block-geoportal .menu-item--right>a {
+	border-left: groove 2px #fff;
+	border-right: none;
+
+}
+
+#block-geoportal .menu-item--right-icon>a:before {
+	display: inline-block;
+	float: left;
+	width: 13px;
+	height: 24px;
+	margin-right: 10px;
+	content: " ";
+}
+
+#block-geoportal .menu-item--first>a {
+	background: #93d1eb url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAZCAIAAAB/8tMoAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAACtJREFUeNpiWHj1NdN/BgYmBiAG0f//MzD9Q2L/h7L/IbHhavCIIZkHEGAAcqQgcMPkVN8AAAAASUVORK5CYII=') 0 0 repeat-x;
+	font: bold 13px/25px Arial, Helvetica, sans-serif;
+	color: #fff;
+	text-shadow: 0 0;
+	border-right: solid 1px #9bb5c1;
+	border-bottom: solid 1px #9bb5c1;
+}
+
+#block-geoportal .menu-item--first>a:before {
+	display: inline-block;
+	float: left;
+	width: 13px;
+	height: 24px;
+	margin-right: 10px;
+	content: " ";
+}
+
+#block-geoportal>ul {
+	display: inline-block;
+	float: left;
+	position: relative;
+	height: 24px;
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	border-bottom: solid 1px #cdcdcd;
+	background: #f6f6f6 url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAZCAIAAAB/8tMoAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAEpJREFUeNocxkkOABAQAMH+/zdtgyD2q4xDJYVzDmMM1lr0yntPCAERIcZISomc81dKodZKa+3rvTPGYM75rbXYe3PO4d6rngADAFm1RWqJmqIjAAAAAElFTkSuQmCC') 0 0 repeat-x;
+	clear: both;
+	justify-content: center;
+}
+
+#block-geoportal>ul>li {
+	float: left;
+	display: inline-block;
+	position: relative;
+	border: none;
+	white-space: nowrap;
+	justify-content: center;
+}
+
+#block-geoportal>ul>li.title {
+	padding-left: 10px;
+	font: normal 12px/26px Arial,Helvetica,sans-serif;
+}
+
+#block-geoportal>ul>li>a {
+	display: block;
+	padding: 0 10px;
+	height: 24px;
+	font: normal 12px/26px Arial, Helvetica, sans-serif;
+	text-decoration: none;
+	color: #333;
+	text-shadow: 1px 1px 0 #fff;
+	border-right: groove 2px #fff;
+	transition: background 200ms, color 200ms;
+	-moz-transition: background 200ms, color 200ms;
+	-webkit-transition: background 200ms, color 200ms;
+	-o-transition: background 200ms, color 200ms;
+}
+
+#block-geoportal>ul>li:hover {
+	z-index: 10;
+}
+
+#block-geoportal>ul>li:hover>a {
+	background: #fff;
+	color: #000;
+}
+
+#block-geoportal .menu-item--first:hover>a {
+	background: #addcf0;
+	color: #fff;
+}

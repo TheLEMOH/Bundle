@@ -1,0 +1,18 @@
+.ol-popup {
+    position: absolute; 
+   background-color: white;
+   -webkit-filter: drop-shadow(0 1px 4px rgba(0,0,0,0.2));
+   filter: drop-shadow(0 1px 4px rgba(0,0,0,0.2));
+   padding: 15px;
+   border-radius: 10px;
+   border: 1px solid #cccccc;
+   text-align: center;
+   bottom: 12px;
+   font-size: 10px;
+   width: 100px;
+   height: 50px;
+ }
+
+.dashed {
+   stroke-dasharray: 3;
+}

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="css/popup.css" rel="stylesheet" type="text/css" />
+    <link href="css/nv.d3.css" rel="stylesheet" type="text/css" />
+    <link href="css/ol.css" rel="stylesheet" type="text/css" />
+    <link href="css/Nvd3.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href="css/datepicker.min.css" rel="stylesheet" type="text/css" />
+    <link href="css/table.css" rel="stylesheet" type="text/css" />
+    <link href="css/MainMenu.css" rel="stylesheet" type="text/css" />
+    <link href="css/menuGis.css" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+    <nav role="navigation" aria-labelledby="block-geoportal-menu" id="block-geoportal"
+        class="block block-menu navigation menu--main">
+        <ul class="menu">
+            <li class="menu-item gpheader__icon gpheader__icon_home menu-item--first">
+                <a href="http://gis.krasn.ru" class="is-active">Геопортал</a>
+            </li>
+            <li class="menu-item title">
+                <span>Данные оперативного мониторинга | Аналитика</span>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="airMap">
+        <div class="HeadMenu">
+            <div class="AirDaysDirection">
+                <img src="pictures/arrow-white.png" id="Direction_Arrow" height="35px" width="35px" />
+                <div id="windspeed"></div>
+                <div id="timedisplay"></div>
+            </div>
+            <div class="HeadMenuUturn">
+                <div class="accordion" id="airAccordion">
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                        <button type="button" class="btn btn-info" id="calendar" data-toggle="collapse"
+                            data-target="#collapseCalendar" aria-expanded="false"
+                            aria-controls="collapseCalendar">Календарь</button>
+                        <button type="button" class="btn btn-info" id="settings" data-toggle="collapse"
+                            data-target="#collapseIndicator" aria-expanded="false"
+                            aria-controls="collapseIndicator">Дополнительные
+                            настройки</button>
+                        <button button type="button" class="btn btn-info" id="layer" data-toggle="collapse"
+                            data-target="#collapseLayer" aria-expanded="false"
+                            aria-controls="collapseLayer">Легенда</button>
+                    </div>
+                    <div id="collapseCalendar" class="collapse" aria-labelledby="calendar" data-parent="#airAccordion">
+                        <div class="card">
+                            <div class="card-header">Календарь</div>
+                            <div class="card-body">
+                                <input type="text" class="form-control" data-range="true" id="day"
+                                    data-multiple-dates-separator=" : "
+                                    style="width: 100%; background-color:rgb(240, 240, 240);" class="datepicker-here" />
+                                <select id="timeinterval" class="form-control">
+                                    <option disabled selected value="1hour">Интервал времени</option>
+                                    <option value="10min">10 минут</option>
+                                    <option value="20min">20 минут</option>
+                                    <option value="30min">30 минут</option>
+                                    <option value="1hour">Один час</option>
+                                    <option value="2hour">Два часа</option>
+                                    <option value="1day">Сутки</option>
+                                </select>
+
+                            </div>
+                        </div>
+                        <button id="refresh" class="btn btn-info refresh">Применить</button>
+                    </div>
+                    <div id="collapseIndicator" class="collapse" aria-labelledby="settings" data-parent="#airAccordion">
+                        <div class="card">
+                            <div class="airCollumn">
+                                <div class="card">
+                                    <div class="card-header">
+                                        Показатели
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="airCardItem"><input type="checkbox" class="radio" name="Температура"
+                                                value="103" id="103" /><label for="103">Температура</label></div>
+                                        <div class="airCardItem"><input type="checkbox" class="radio" name="PM2.5"
+                                                value="348" id="348" checked /><label for="348">PM2.5</label></div>
+                                        <div class="airCardItem"><input type="checkbox" class="radio" name="Влажность"
+                                                value="100" id="100" /><label for="100">Влажность</label></div>
+                                        <div class="airCardItem"><input type="checkbox" class="radio" name="Давление"
+                                                value="99" id="99" /><label for="99">Давление</label></div>
+                                        <div class="airCardItem"><input type="checkbox" class="radio"
+                                                name="Азота диоксид" value="58" id="58" /><label for="58">Азота
+                                                диоксид</label></div>
+                                        <div class="airCardItem"><input type="checkbox" class="radio" name="Азота оксид"
+                                                value="59" id="59" /><label for="59">Азота
+                                                оксид</label></div>
+                                        <div class="airCardItem"><input type="checkbox" class="radio"
+                                                name="Углерода оксид" value="63" id="63" /><label for="63">Углерода
+                                                оксид</label></div>
+                                        <div class="airCardItem"><input type="checkbox" class="radio" name="Сероводород"
+                                                value="64" id="64" /><label for="64">Сероводород</label></div>
+                                        <div class="airCardItem"><input type="checkbox" class="radio"
+                                                name="Направление ветра" value="101" id="101" /><label
+                                                for="101">Направление
+                                                ветра</label></div>
+                                        <div class="airCardItem"><input type="checkbox" class="radio"
+                                                name="Скорость ветра" value="102" id="102" /><label for="102">Скорость
+                                                ветра</label></div>
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <div class="card-header">
+                                        Посты мониторинга
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="airCardItem"><input type="radio" class="radio2" name="radio2"
+                                                value="1" id="1" />
+                                            <label for="1">Краевые</label></div>
+                                        <div class="airCardItem"><input type="radio" class="radio2" name="radio2"
+                                                value="9" id="9" checked />
+                                            <label for="9">КНЦ</label></div>
+                                        <div class="airCardItem"><input type="radio" class="radio2" name="radio2"
+                                                value="8" id="8" />
+                                            <label for="8">Небо</label></div>
+                                        <div class="airCardItem"><input type="radio" class="radio2" name="radio2"
+                                                value="10" id="AirRadioComparison" />
+                                            <label for="AirRadioComparison">Сравнение <img
+                                                    title="Режим 'Сравнение' позволяет выбрать посты мониторинга для отображения из разных групп. Для выбора используйте кнопку 'Открыть настройки'."
+                                                    src="pictures/icon-questionMark.png" width="16px"
+                                                    height="16px"></label></div>
+                                        <button class="btn-link" data-toggle="modal" data-target="#selection_station"
+                                            id="selectionStationButton">Открыть
+                                            настройки</button>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <div class="card-header">
+                                        Настройки слоя
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="airCardItem"><label>Переключить слой</label><select
+                                                id="airChangeLayer"><option value="348">PM2.5</option></select></div>
+                                        <div class="airCardItem"><input id="AirIsolines" type="checkbox" /><label
+                                                for="AirIsolines">Полигоны</label></div>
+                                        <div class="airCardItem"><input id="AirBarriers" type="checkbox" /><label
+                                                for="AirBarriers">Барьеры</label></div>
+                                        <div class="airCardItem"><input id="AirWind" type="checkbox" /><label
+                                                for="AirWind">Ветер</label></div>
+                                        <div class="airCardItem">Прозрачность слоя</div>
+                                        <div class="airCardItem"><input type="range" id="opacityLayersChange"
+                                                name="volume" step="0.1" min="0" max="1"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button id="refresh2" class="btn btn-info refresh">Применить</button>
+                        </div>
+                    </div>
+                    <div id="collapseLayer" class="collapse" aria-labelledby="layer" data-parent="#airAccordion">
+                        <div class="card">
+                            <div class="card-header">
+                                <span id="airLegendHeader"></span>
+                            </div>
+                            <div class="card-body transparent" id="airLegendBody">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+               <!--  <div><button class="btn btn-info downloadButton"><img src="pictures/downloadButton.png" height="20px"
+                            width="20px"></button></div> -->
+            </div>
+        </div>
+        <div class="MainBody">
+            <div id="map"></div>
+        </div>
+    </div>
+
+    <div class="GridFooter">
+
+        <div style="padding: 5px;">
+            <button class="btn btn-info btn-sm" id="CloseOpenChartButton" data-toggle="collapse"
+                href="#collapseChartOne" role="button" aria-expanded="false" aria-controls="collapseChartOne">Открыть
+                график</button>
+
+            <button class="btn btn-info btn-sm" id="ChangeChartButton" type="button" data-toggle="collapse"
+                data-target=".multi-collapse" aria-expanded="false" aria-controls="collapseChartOne collapseChartTwo"
+                disabled>Переключить графики</button>
+        </div>
+
+        <div class="card card-body" style="width: 100%;">
+            <input class="custom-range" type="range" id="range_footer" list="tickmarks" step="1"
+                style="width: 100%; height:5px;" value="0">
+            <datalist id="tickmarks">
+            </datalist>
+        </div>
+
+        <div class="collapse multi-collapse" id="collapseChartOne" style="width: 100%;">
+            <div class="card card-body">
+                <div id="chart" style="height: 350px;"><svg></svg></div>
+            </div>
+        </div>
+
+        <div class="collapse multi-collapse" id="collapseChartTwo" style="width: 100%;">
+            <div class="card card-body">
+                <div id="chart2" style="height: 350px; text-align: center;">
+                    <p>Выберите несколько показателей и нажмите на станцию мониторинга</p>
+                    <p>Зажмите клавишу 'Ctrl', чтобы выбрать несколько постов мониторинга для отображения на дополнительном графике</p>
+                    <p></p>
+                    <svg></svg>
+                </div>
+            </div>
+        </div>
+
+
+        <!--         <div class="accordion" id="accordionChart" style="width: 100%;">
+            <div class="card">
+                <div id="collapseChartOne" class="collapse" data-parent="#accordionChart">
+                    <div class="card-body">
+                        <div class="ChartFooter">
+                            <div id="chart" style="height: 350px;"><svg></svg></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div id="collapseChartTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionChart">
+                    <div class="card-body">
+                        <div class="ChartFooter">
+                            <div id="chart2" style="height: 350px;"><svg></svg></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+
+    </div>
+
+
+    <div class="modal fade " id="selection_station" tabindex="-1" role="dialog"
+        aria-labelledby="selection_station_modal" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="selection_station_modal">Расширенный выбор
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">Закрыть</span>
+                    </button>
+                </div>
+                <div id="AirStationsList" class="card-body" style="width: 100%;">
+                    <div class="AirStationContent"></div>
+                    <div class="AirStationContent"></div>
+                    <div class="AirStationContent"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="removeSelectionButton" class="btn btn-info" style="width:150px">Снять
+                        выделение</button>
+                    <button type="button" id="putSelectionButton" class="btn btn-info" style="width:150px">Выделить
+                        все
+                    </button>
+                    <button type="button" data-dismiss="modal" class="btn btn-info"
+                        id="button_selection_station">Применить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/dline@1.0.0/dist/dline.min.js"></script>
+    <script src="ol.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="datepicker.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.13/d3.min.js"></script>
+    <script src="nv.d3.js"></script>
+    <script src="Air.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+
+</body>
+
+</html>

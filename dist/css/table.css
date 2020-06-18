@@ -1,0 +1,261 @@
+* {
+	margin: 0;
+	padding: 0;
+}
+
+html {
+	box-sizing: border-box;
+	font-size: 18px;
+	font-weight: 400;
+	color: #212529;
+	text-align: left;
+}
+
+
+*, *::before, *::after {
+	box-sizing: inherit;
+}
+
+button {
+	border: none;
+	outline: none;
+	background: none;
+	cursor: pointer;
+}
+
+.visually-hidden {
+	display: none;
+	position: absolute;
+	clip: rect(0 0 0 0);
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+}
+
+/* Header */
+
+header {
+	border-bottom: 5px solid #055a81;
+}
+
+.airHeader {
+	display: -webkit-flex;
+	display: -ms-flex;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+}
+
+.airLinks, .entryNavigation {
+	display: -webkit-flex;
+	display: -ms-flex;
+	display: flex;
+	list-style: none;
+	text-transform: uppercase;
+}
+
+.airLogo img {
+	width: 70px;
+	height: 70px;
+	float: left;
+	margin-left: 2px;
+	padding: 0px;
+	margin: 0px;
+}
+
+.entryNavigation {
+	position: absolute;
+	right: 0;
+	clear: both;
+}
+
+.link {
+	display: block;
+	padding: 22px;
+	margin: 0;
+	color: #222222;
+	font-size: 1rem;
+	letter-spacing: 1px;
+	line-height: 1.5;
+	font-weight: bold;
+	text-decoration: none;
+	text-transform: uppercase;
+}
+
+.link:hover {
+	background-color: #eeeeee;
+	text-decoration: none;
+}
+
+.airLinks {
+	padding: 0px;
+	margin: 0px;
+}
+
+.airLinks .airInactiveButton, .entryNavigation .airInactiveButton {
+	cursor: auto;
+	color: #cccccc;
+}
+
+.airActiveButton {
+	background: #055a81;
+	color: white;
+}
+
+.airActiveButton:hover {
+	background: #055a81;
+	color: white;
+}
+
+.airTitle {
+	color: #055a81;
+	margin: 0 15px;
+}
+
+.airTitle p {
+	text-align: left;
+	font-weight: bold;
+	padding: 0px;
+	margin: 0px;
+}
+
+.airTitle p:first-child {
+	font-size: 1.1rem;
+}
+
+.dropBtn {
+	color: #ffffff;
+	background-color: #055a81;
+	font-size: 1rem;
+	font-weight: bold;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	min-width: 200px;
+	padding: 16px;
+}
+
+/*@media screen and (max-width: 1440px) {
+	.airProperties {
+		height: 145px;
+	}
+	.airPollutionIndicator {
+		margin-left: 2.2rem;
+	}
+	.airPollutionIndicator .value {
+		line-height: 7.5rem;
+	}
+	.temperature {
+		font-size: 2.2rem;
+	}
+	.time {
+		padding-top: .9rem;
+	}
+}
+
+@media screen and (max-width: 1100px) {
+	.airTitle {
+		display: none;
+	}
+}
+
+@media screen and (max-width: 1024px) {
+	#searchLine {
+		background-position: 3% 50%;
+	}
+	.airTitle {
+		display: none;
+	}
+	.airPollutionIndicator {
+		margin-left: 2.8rem;
+	}
+	.small {
+		font-size: 1rem;
+	}
+}
+
+@media screen and (max-width: 768px) {
+	.airHeader {
+		-webkit-flex-direction: column;
+		-ms-flex-direction: column;
+		flex-direction: column;
+	}
+	.airLogo img {
+		width: 103px;
+		height: 103px;
+	}
+	.airLinks {
+		-webkit-flex-direction: column;
+		-ms-flex-direction: column;
+		flex-direction: column;
+		width: 100%;
+		text-align: center;
+	}
+	.link {
+		font-size: 2rem;
+	}
+	.entryNavigation {
+		position: inherit;
+	}
+	.search {
+		display: block;
+	}
+	#searchLine, #orderSortSwitch, .dropBtn {
+		height: 80px;
+	}
+	#searchLine {
+		background-position: 4% 50%;
+	}
+	.sorting {
+		justify-content: flex-end;
+	}
+	.sortOrderSwitch {
+		width: 80px;
+		text-align: center;
+		border: none;
+	}
+	.dropBtn, .sortWayList a {
+		font-size: 1.6rem;
+	}
+	#orderSortSwitch, .dropBtn {
+		border: none;
+	}
+	.airProperties {
+		position: absolute;
+		top: 72%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		text-align: center;
+		font-weight: bold;
+	}
+	.faded {
+		font-weight: bold;
+	}
+	.airPollutionIndicator {
+		margin-left: 0;
+	}
+	.airPollutionIndicator .particleMatter {
+		position: absolute;
+		top: 48%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+	}
+	.time {
+		padding-top: 1.7rem;
+	}
+}
+
+@media screen and (max-width: 550px) {
+	.sorting {
+		float: none;
+		justify-content: space-between;
+	}
+	#searchLine {
+		background-position: 6% 50%;
+	}
+	.small {
+		font-size: 1.3rem;
+	}
+	.time {
+		padding-top: .9rem;
+	}
+} */
