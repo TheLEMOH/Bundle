@@ -4,10 +4,10 @@ import { GetAttributes, GetTime } from './Attributes'
 async function Download(Time, attribution) {
     const layerID = (attribution.layerID != 0) ? attribution.layerID : attribution.indicator_id[0];
     const key = '654hblgm9gl8367h';
-    const url_data = 'http://gis.krasn.ru/sc/api/1.0/projects/' + attribution.station_id + '/aggvalues?key=' + key + '&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=' + layerID + '&time_interval=' + attribution.interval + '&limit=300000';
-    const url_sets = 'http://gis.krasn.ru/sc/api/1.0/projects/' + attribution.station_id + '/sites?key=' + key + '&&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=' + layerID + '';
-    const url_wind_dir = 'http://gis.krasn.ru/sc/api/1.0/projects/1/aggvalues?sites=3833&key=' + key + '&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=101&time_interval=' + attribution.interval + '&limit=30000';
-    const url_wind_speed = 'http://gis.krasn.ru/sc/api/1.0/projects/1/aggvalues?sites=3833&key=' + key + '&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=102&time_interval=' + attribution.interval + '&limit=30000';
+    const url_data = 'https://gis.krasn.ru/sc/api/1.0/projects/' + attribution.station_id + '/aggvalues?key=' + key + '&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=' + layerID + '&time_interval=' + attribution.interval + '&limit=300000';
+    const url_sets = 'https://gis.krasn.ru/sc/api/1.0/projects/' + attribution.station_id + '/sites?key=' + key + '&&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=' + layerID + '';
+    const url_wind_dir = 'https://gis.krasn.ru/sc/api/1.0/projects/1/aggvalues?sites=3833&key=' + key + '&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=101&time_interval=' + attribution.interval + '&limit=30000';
+    const url_wind_speed = 'https://gis.krasn.ru/sc/api/1.0/projects/1/aggvalues?sites=3833&key=' + key + '&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=102&time_interval=' + attribution.interval + '&limit=30000';
     const RawData = fetch(url_data);
     const RawDataSites = fetch(url_sets);
     const RawWindSpeed = fetch(url_wind_speed);
@@ -31,8 +31,8 @@ async function Download(Time, attribution) {
 
 async function DownloadIndividual(Time, attribution, SitesList) {
     const key = '654hblgm9gl8367h';
-    const url_wind_dir = 'http://gis.krasn.ru/sc/api/1.0/projects/1/aggvalues?sites=3833&key=' + key + '&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=101&time_interval=' + attribution.interval + '&limit=30000';
-    const url_wind_speed = 'http://gis.krasn.ru/sc/api/1.0/projects/1/aggvalues?sites=3833&key=' + key + '&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=102&time_interval=' + attribution.interval + '&limit=30000';
+    const url_wind_dir = 'https://gis.krasn.ru/sc/api/1.0/projects/1/aggvalues?sites=3833&key=' + key + '&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=101&time_interval=' + attribution.interval + '&limit=30000';
+    const url_wind_speed = 'https://gis.krasn.ru/sc/api/1.0/projects/1/aggvalues?sites=3833&key=' + key + '&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=102&time_interval=' + attribution.interval + '&limit=30000';
     const RawWindSpeed = fetch(url_wind_speed);
     const RawWindDirection = fetch(url_wind_dir);
     const ListStation = attribution.Station_List_Id;
@@ -46,7 +46,7 @@ async function DownloadIndividual(Time, attribution, SitesList) {
     for (let i = 0; i < ListStation.length; i++) {
         for (let j = 0; j < ListStation[i].length; j++) {
             const layerID = (attribution.layerID != 0) ? attribution.layerID : attribution.indicator_id[0];
-            const url_dataset = 'http://gis.krasn.ru/sc/api/1.0/projects/' + ListStation[i][j].project + '/aggvalues?sites=' + ListStation[i][j].id + '& key=paaqyrklx1d1ehik&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=' + layerID + '&time_interval=' + attribution.interval + '&limit=300000';
+            const url_dataset = 'https://gis.krasn.ru/sc/api/1.0/projects/' + ListStation[i][j].project + '/aggvalues?sites=' + ListStation[i][j].id + '& key=paaqyrklx1d1ehik&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=' + layerID + '&time_interval=' + attribution.interval + '&limit=300000';
             const RawData = fetch(url_dataset);
             const Data = await RawData.then(res => res.text()).then(res => Handlers.ParseText(res));
             const Graph = Handlers.ParseXMLDataForGraph(Data, SitesList, layerID);
@@ -80,9 +80,9 @@ async function DownloadSitesList() {
     let attribution = GetAttributes();
     const key = '654hblgm9gl8367h';
     const SitesFullList = [];
-    const url_stationset_regionl = 'http://gis.krasn.ru/sc/api/1.0/projects/1/sites?key=' + key + '&&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=' + attribution.indicator_id[0] + '';
-    const url_stationset_knc = 'http://gis.krasn.ru/sc/api/1.0/projects/9/sites?key=' + key + '&&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=' + attribution.indicator_id[0] + '';
-    const url_stationset_nebo = 'http://gis.krasn.ru/sc/api/1.0/projects/8/sites?key=' + key + '&&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=' + attribution.indicator_id[0] + '';
+    const url_stationset_regionl = 'https://gis.krasn.ru/sc/api/1.0/projects/1/sites?key=' + key + '&&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=' + attribution.indicator_id[0] + '';
+    const url_stationset_knc = 'https://gis.krasn.ru/sc/api/1.0/projects/9/sites?key=' + key + '&&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=' + attribution.indicator_id[0] + '';
+    const url_stationset_nebo = 'https://gis.krasn.ru/sc/api/1.0/projects/8/sites?key=' + key + '&&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=' + attribution.indicator_id[0] + '';
 
     let Sites_Set_Regional = fetch(url_stationset_regionl);
     let Sites_Set_KNC = fetch(url_stationset_knc);
@@ -124,15 +124,15 @@ async function DownloadSitesList() {
 async function DownloadWind(Time, attribution) {
     /* Ссылки */
     const key = '654hblgm9gl8367h';
-    const url_wind_dir = 'http://gis.krasn.ru/sc/api/1.0/projects/1/aggvalues?s&key=' + key + '&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=101&time_interval=' + attribution.interval + '&limit=30000';
-    const url_wind_speed = 'http://gis.krasn.ru/sc/api/1.0/projects/1/aggvalues?&key=' + key + '&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=102&time_interval=' + attribution.interval + '&limit=30000';
-    const url_wind_speed_metar = 'http://gis.krasn.ru/sc/api/1.0/projects/10/aggvalues?&key=' + key + '&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=102&time_interval=' + attribution.interval + '&limit=30000';
-    const url_wind_dir_metar = 'http://gis.krasn.ru/sc/api/1.0/projects/10/aggvalues?s&key=' + key + '&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=101&time_interval=' + attribution.interval + '&limit=30000';
-    const url_wind_speed_ugms = 'http://gis.krasn.ru/sc/api/1.0/projects/5/aggvalues?&key=' + key + '&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=102&time_interval=' + attribution.interval + '&limit=30000';
-    const url_wind_dir_ugms = 'http://gis.krasn.ru/sc/api/1.0/projects/5/aggvalues?s&key=' + key + '&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=101&time_interval=' + attribution.interval + '&limit=30000';
-    const url_stationset = 'http://gis.krasn.ru/sc/api/1.0/projects/1/sites?key=' + key + '&&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=102';
-    const url_stationset_metar = 'http://gis.krasn.ru/sc/api/1.0/projects/10/sites?key=' + key + '&&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=102';
-    const url_stationset_ugms = 'http://gis.krasn.ru/sc/api/1.0/projects/5/sites?key=' + key + '&&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=102';
+    const url_wind_dir = 'https://gis.krasn.ru/sc/api/1.0/projects/1/aggvalues?s&key=' + key + '&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=101&time_interval=' + attribution.interval + '&limit=30000';
+    const url_wind_speed = 'https://gis.krasn.ru/sc/api/1.0/projects/1/aggvalues?&key=' + key + '&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=102&time_interval=' + attribution.interval + '&limit=30000';
+    const url_wind_speed_metar = 'https://gis.krasn.ru/sc/api/1.0/projects/10/aggvalues?&key=' + key + '&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=102&time_interval=' + attribution.interval + '&limit=30000';
+    const url_wind_dir_metar = 'https://gis.krasn.ru/sc/api/1.0/projects/10/aggvalues?s&key=' + key + '&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=101&time_interval=' + attribution.interval + '&limit=30000';
+    const url_wind_speed_ugms = 'https://gis.krasn.ru/sc/api/1.0/projects/5/aggvalues?&key=' + key + '&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=102&time_interval=' + attribution.interval + '&limit=30000';
+    const url_wind_dir_ugms = 'https://gis.krasn.ru/sc/api/1.0/projects/5/aggvalues?s&key=' + key + '&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=101&time_interval=' + attribution.interval + '&limit=30000';
+    const url_stationset = 'https://gis.krasn.ru/sc/api/1.0/projects/1/sites?key=' + key + '&&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=102';
+    const url_stationset_metar = 'https://gis.krasn.ru/sc/api/1.0/projects/10/sites?key=' + key + '&&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=102';
+    const url_stationset_ugms = 'https://gis.krasn.ru/sc/api/1.0/projects/5/sites?key=' + key + '&&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=102';
     /* Посты */
     const RawDataStations = fetch(url_stationset);
     const RawDataStationsMETAR = fetch(url_stationset_metar);
@@ -197,7 +197,7 @@ async function DownLoadMultiIndicator(turn) {
         const PromiseData = [];
 
         for (let i = 0; i < Indicators.length; i++) {
-            const url_dataset = 'http://gis.krasn.ru/sc/api/1.0/projects/' + project + '/aggvalues?sites=' + id + '&key=' + key + '&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=' + Indicators[i] + '&time_interval=' + attribution.interval + '&limit=300000';
+            const url_dataset = 'https://gis.krasn.ru/sc/api/1.0/projects/' + project + '/aggvalues?sites=' + id + '&key=' + key + '&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=' + Indicators[i] + '&time_interval=' + attribution.interval + '&limit=300000';
             PromiseData.push(fetch(url_dataset).then(res => res.text()).then(res => Handlers.ParseText(res)).then(res => Handlers.ParseXMLOneForChart(res, Indicators[i])));
         }
 
