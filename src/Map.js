@@ -1,4 +1,4 @@
-import { GetColorScheme, GetRange, RangeConversion, RangeConversionMainPoint, GenerateColorMainPoint, GetColorForPoligon } from './Attributes'
+import { GetColorScheme, GetRange, RangeConversion, RangeConversionMainPoint, GenerateColorMainPoint, GetColorForVoronoi } from './Attributes'
 import { MainChart, AdditionalChart, RefreshAdditionalChart, CloseOpenChart } from './Chart'
 import { DownLoadMultiIndicator } from './Download'
 import * as krskMask from './krsk.json';
@@ -288,32 +288,12 @@ async function Isolines(dots, range, attribution) {
         poligons = dline.isobands(dline.IDW(dots, 250, { bbox: [20, 20], units: ['meters', 'degrees'], mask, boundaries: [[+50, +0.2], [+100, +0.1]], exponent: 3 }), range);
     }
     else {
-        poligons = dline.isobands(dline.IDW(dots, 250, { bbox: [50, 120], units: ['meters', 'degrees'], exponent: 4 }), range, krskMask);
 
-        console.log(poligons);
+        poligons = dline.voronoi(dots, [92.25, 55.8, 93.4, 56.2], krskMask)
 
-        let up = 0;
-        let down = 0;
-
-        poligons.features.forEach(p => {
-
-            let editedValue = 0;
-            const [e1, e2] = p.properties.value.split(/>|<|-/);
-            if (e1 && e2) {
-                editedValue = +e1 + (+e2 - (+e1)) / 2
-            } else {
-                editedValue = +e1 || +e2;
-            }
-
-            up += p.properties.area * editedValue;
-            down += p.properties.area;
-        })
-
-        const totalPollutionLevel = up / down;
+        const totalPollutionLevel = dline.getTotalLevel(poligons);
 
         document.querySelector('#totalPollutionLevel').innerHTML = totalPollutionLevel.toFixed();
-
-
     }
     let opacity = document.getElementById("opacityLayersChange").value;
 
@@ -331,10 +311,11 @@ async function Isolines(dots, range, attribution) {
 
     vectorLayerP.set('name', 'polygons');
     vectorLayerP.setStyle(function (i) {
-        const color = GetColorForPoligon(colorGradient, rangeForColor, i.values_.value)
+
+        const color = GetColorForVoronoi(colorGradient, rangeForColor, i.values_.value)
         return new ol.style.Style({
             fill: new ol.style.Fill({ color: color }),
-            stroke: new ol.style.Stroke({ width: 0, color: color }),
+            stroke: new ol.style.Stroke({ width: 1, color: 'black' }),
         });
     });
     return vectorLayerP;

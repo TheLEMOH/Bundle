@@ -7,7 +7,7 @@
   display: grid;
   grid-template-columns: 1fr;
   z-index: 3;
-  bottom: 0px;
+  bottom: 20px;
   width: 100%;
   position: fixed;
   justify-items: center;

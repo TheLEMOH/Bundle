@@ -352,6 +352,19 @@ function GetColorForPoligon(colorScheme, range, value) {
 
 };
 
+function GetColorForVoronoi(colorScheme, range, value) {
+    if (value <= +range[0].slice(1)) return colorScheme[0]
+
+    for (let i = 1; i < range.length - 1; i++) {
+        const ranges = range[i].split('-')
+        if (value < +ranges[1] && value >= +ranges[0]) {
+            return colorScheme[i];
+        };
+    };
+
+    if (value > +range[range.length - 1].slice(0, -1)) return colorScheme[colorScheme.length - 1]
+};
+
 async function ChangeWindSpeed(data) {
     document.getElementById("windspeed").innerText = data.toFixed(1) + ' м/с';
 };
@@ -363,6 +376,7 @@ async function ChangeDirectionArrow(data) {
 
 export {
     GetColorForPoligon,
+    GetColorForVoronoi,
     GetTime,
     GetAttributes,
     GetRange,
