@@ -7,7 +7,7 @@
   display: grid;
   grid-template-columns: 1fr;
   z-index: 3;
-  bottom: 0px;
+  bottom: 20px;
   width: 100%;
   position: fixed;
   justify-items: center;
@@ -77,7 +77,7 @@
 .AirDaysDirection {
   background: #055a81;
   display: grid;
-  grid-template-columns: 45px 65px 200px;
+  grid-template-columns: 45px 65px 155px 45px;
   z-index: 3;
   justify-items: left;
   border-radius: 5px;

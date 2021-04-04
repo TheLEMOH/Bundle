@@ -30,6 +30,9 @@
         </ul>
     </nav>
 
+    <div id="totalPollutionLevel" style="border: solid 2px black; padding: 0.2em; font-size: 36px; background-color: rgba(0, 0, 0, 0.7); color: white; width: 70px; height: 70px; position: fixed; top: 70px; left: 6px; z-index: 3; text-align: center;">NA</div>
+
+
     <div class="airMap">
         <div class="HeadMenu">
             <div class="AirDaysDirection">
@@ -113,19 +116,23 @@
                                     <div class="card-body">
                                         <div class="airCardItem"><input type="radio" class="radio2" name="radio2"
                                                 value="1" id="1" />
-                                            <label for="1">Краевые</label></div>
+                                            <label for="1">Краевые</label>
+                                        </div>
                                         <div class="airCardItem"><input type="radio" class="radio2" name="radio2"
                                                 value="9" id="9" checked />
-                                            <label for="9">КНЦ</label></div>
+                                            <label for="9">КНЦ</label>
+                                        </div>
                                         <div class="airCardItem"><input type="radio" class="radio2" name="radio2"
                                                 value="8" id="8" />
-                                            <label for="8">Небо</label></div>
+                                            <label for="8">Небо</label>
+                                        </div>
                                         <div class="airCardItem"><input type="radio" class="radio2" name="radio2"
                                                 value="10" id="AirRadioComparison" />
                                             <label for="AirRadioComparison">Сравнение <img
                                                     title="Режим 'Сравнение' позволяет выбрать посты мониторинга для отображения из разных групп. Для выбора используйте кнопку 'Открыть настройки'."
                                                     src="pictures/icon-questionMark.png" width="16px"
-                                                    height="16px"></label></div>
+                                                    height="16px"></label>
+                                        </div>
                                         <button class="btn-link" data-toggle="modal" data-target="#selection_station"
                                             id="selectionStationButton">Открыть
                                             настройки</button>
@@ -242,7 +249,9 @@
         </div>
     </div>
 
-    <script src="https://unpkg.com/dline@1.0.0/dist/dline.min.js"></script>
+    <script src='https://unpkg.com/martinez-polygon-clipping@0.7.0/dist/martinez.min.js'></script>
+    <script src='https://unpkg.com/@turf/turf@6.3.0/turf.min.js'></script>
+    <script src="https://unpkg.com/dline@1.0.6/dist/dline.min.js"></script>
     <script src="dist/ol.js"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"

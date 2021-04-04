@@ -1,3 +1,5 @@
+import json from '@rollup/plugin-json';
+
 export default {
     input: 'src/index.js',
     output: [
@@ -5,5 +7,6 @@ export default {
             file: 'dist/Air.js',
             format: 'cjs'
         }
-    ]
+    ],
+    plugins: [json()]
 }
