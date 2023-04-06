@@ -487,233 +487,474 @@ async function ChangeDirectionArrow(data) {
 }
 
 async function Download(Time, attribution) {
-    const layerID = (attribution.layerID != 0) ? attribution.layerID : attribution.indicator_id[0];
-    const key = '654hblgm9gl8367h';
-    const url_data = 'https://gis.krasn.ru/sc/api/1.0/projects/' + attribution.station_id + '/aggvalues?key=' + key + '&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=' + layerID + '&time_interval=' + attribution.interval + '&limit=300000';
-    const url_sets = 'https://gis.krasn.ru/sc/api/1.0/projects/' + attribution.station_id + '/sites?key=' + key + '&&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=' + layerID + '';
-    const url_wind_dir = 'https://gis.krasn.ru/sc/api/1.0/projects/1/aggvalues?sites=3833&key=' + key + '&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=101&time_interval=' + attribution.interval + '&limit=30000';
-    const url_wind_speed = 'https://gis.krasn.ru/sc/api/1.0/projects/1/aggvalues?sites=3833&key=' + key + '&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=102&time_interval=' + attribution.interval + '&limit=30000';
-    const RawData = fetch(url_data);
-    const RawDataSites = fetch(url_sets);
-    const RawWindSpeed = fetch(url_wind_speed);
-    const RawWindDirection = fetch(url_wind_dir);
-    const DataSites = await RawDataSites.then(res => res.text()).then(res => (ParseText(res))).then(res => ParseXMLSites(res));
-    const Data = await RawData.then(res => res.text()).then(res => ParseText(res));
-    let WindSpeed = await RawWindSpeed.then(res => res.text()).then(res => ParseText(res));
-    let WindDirection = await RawWindDirection.then(res => res.text()).then(res => ParseText(res));
-    const DataForGraph = ParseXMLDataForGraph(Data, DataSites, layerID);
-    const DataForLayer = ParseXMLDataForLayer(Data, Time, attribution.station_id);
-    WindSpeed = ParseXMLOne(WindSpeed);
-    WindDirection = ParseXMLOne(WindDirection);
-    return {
-        DataSites,
-        DataForGraph: await DataForGraph,
-        DataForLayer: await DataForLayer,
-        WindSpeed: await WindSpeed,
-        WindDirection: await WindDirection
-    }
+  const layerID = attribution.layerID != 0 ? attribution.layerID : attribution.indicator_id[0];
+  const key = "654hblgm9gl8367h";
+  const url_data =
+    "https://sensor.krasn.ru/sc/api/1.0/projects/" +
+    attribution.station_id +
+    "/aggvalues?key=" +
+    key +
+    "&time_begin=" +
+    attribution.day_one +
+    "&time_end=" +
+    attribution.day_two +
+    "&indicators=" +
+    layerID +
+    "&time_interval=" +
+    attribution.interval +
+    "&limit=300000";
+  const url_sets =
+    "https://sensor.krasn.ru/sc/api/1.0/projects/" +
+    attribution.station_id +
+    "/sites?key=" +
+    key +
+    "&time_begin=" +
+    attribution.day_one +
+    "&time_end=" +
+    attribution.day_two +
+    "&indicators=" +
+    layerID +
+    "";
+  const url_wind_dir =
+    "https://sensor.krasn.ru/sc/api/1.0/projects/1/aggvalues?sites=3833&key=" +
+    key +
+    "&time_begin=" +
+    attribution.day_one +
+    "&time_end=" +
+    attribution.day_two +
+    "&indicators=101&time_interval=" +
+    attribution.interval +
+    "&limit=30000";
+  const url_wind_speed =
+    "https://sensor.krasn.ru/sc/api/1.0/projects/1/aggvalues?sites=3833&key=" +
+    key +
+    "&time_begin=" +
+    attribution.day_one +
+    "&time_end=" +
+    attribution.day_two +
+    "&indicators=102&time_interval=" +
+    attribution.interval +
+    "&limit=30000";
+  const RawData = fetch(url_data);
+  const RawDataSites = fetch(url_sets);
+  const RawWindSpeed = fetch(url_wind_speed);
+  const RawWindDirection = fetch(url_wind_dir);
+  const DataSites = await RawDataSites.then((res) => res.text())
+    .then((res) => ParseText(res))
+    .then((res) => ParseXMLSites(res));
+  const Data = await RawData.then((res) => res.text()).then((res) => ParseText(res));
+  let WindSpeed = await RawWindSpeed.then((res) => res.text()).then((res) => ParseText(res));
+  let WindDirection = await RawWindDirection.then((res) => res.text()).then((res) => ParseText(res));
+  const DataForGraph = ParseXMLDataForGraph(Data, DataSites, layerID);
+  const DataForLayer = ParseXMLDataForLayer(Data, Time, attribution.station_id);
+  WindSpeed = ParseXMLOne(WindSpeed);
+  WindDirection = ParseXMLOne(WindDirection);
+  return {
+    DataSites,
+    DataForGraph: await DataForGraph,
+    DataForLayer: await DataForLayer,
+    WindSpeed: await WindSpeed,
+    WindDirection: await WindDirection,
+  };
 }
+
 async function DownloadIndividual(Time, attribution, SitesList) {
-    const key = '654hblgm9gl8367h';
-    const url_wind_dir = 'https://gis.krasn.ru/sc/api/1.0/projects/1/aggvalues?sites=3833&key=' + key + '&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=101&time_interval=' + attribution.interval + '&limit=30000';
-    const url_wind_speed = 'https://gis.krasn.ru/sc/api/1.0/projects/1/aggvalues?sites=3833&key=' + key + '&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=102&time_interval=' + attribution.interval + '&limit=30000';
-    const RawWindSpeed = fetch(url_wind_speed);
-    const RawWindDirection = fetch(url_wind_dir);
-    const ListStation = attribution.Station_List_Id;
-    let DataForGraph = [];
-    let DataForLayer = Time.map(e => {
-        return {
-            time: e,
-            values: []
-        };
-    });
-    for (let i = 0; i < ListStation.length; i++) {
-        for (let j = 0; j < ListStation[i].length; j++) {
-            const layerID = (attribution.layerID != 0) ? attribution.layerID : attribution.indicator_id[0];
-            const url_dataset = 'https://gis.krasn.ru/sc/api/1.0/projects/' + ListStation[i][j].project + '/aggvalues?sites=' + ListStation[i][j].id + '& key=paaqyrklx1d1ehik&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=' + layerID + '&time_interval=' + attribution.interval + '&limit=300000';
-            const RawData = fetch(url_dataset);
-            const Data = await RawData.then(res => res.text()).then(res => ParseText(res));
-            const Graph = ParseXMLDataForGraph(Data, SitesList, layerID);
-            const Layer = await ParseXMLDataForLayer(Data, Time, ListStation[i][j].project);
-            for (let k = 0; k < Layer.length; k++) {
-                for (let q = 0; q < DataForLayer.length; q++) {
-                    if (Layer[k].time == DataForLayer[q].time) {
-                        DataForLayer[q].values.push(...Layer[k].values);
-                    }
-                }
-            }
-            DataForGraph.push(...await Graph);
-        }    }    let WindSpeed = await RawWindSpeed.then(res => res.text()).then(res => ParseText(res));
-    let WindDirection = await RawWindDirection.then(res => res.text()).then(res => ParseText(res));
-    WindSpeed = ParseXMLOne(WindSpeed);
-    WindDirection = ParseXMLOne(WindDirection);
+  const key = "654hblgm9gl8367h";
+  const url_wind_dir =
+    "https://sensor.krasn.ru/sc/api/1.0/projects/1/aggvalues?sites=3833&key=" +
+    key +
+    "&time_begin=" +
+    attribution.day_one +
+    "&time_end=" +
+    attribution.day_two +
+    "&indicators=101&time_interval=" +
+    attribution.interval +
+    "&limit=30000";
+  const url_wind_speed =
+    "https://sensor.krasn.ru/sc/api/1.0/projects/1/aggvalues?sites=3833&key=" +
+    key +
+    "&time_begin=" +
+    attribution.day_one +
+    "&time_end=" +
+    attribution.day_two +
+    "&indicators=102&time_interval=" +
+    attribution.interval +
+    "&limit=30000";
+  const RawWindSpeed = fetch(url_wind_speed);
+  const RawWindDirection = fetch(url_wind_dir);
+  const ListStation = attribution.Station_List_Id;
+  let DataForGraph = [];
+  let DataForLayer = Time.map((e) => {
     return {
-        DataForGraph,
-        DataForLayer,
-        DataSites: SitesList,
-        WindSpeed: await WindSpeed,
-        WindDirection: await WindDirection
-    }
-
-}
-async function DownloadSitesList() {
-    let attribution = GetAttributes();
-    const key = '654hblgm9gl8367h';
-    const SitesFullList = [];
-    const url_stationset_regionl = 'https://gis.krasn.ru/sc/api/1.0/projects/1/sites?key=' + key + '&&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=' + attribution.indicator_id[0] + '';
-    const url_stationset_knc = 'https://gis.krasn.ru/sc/api/1.0/projects/9/sites?key=' + key + '&&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=' + attribution.indicator_id[0] + '';
-    const url_stationset_nebo = 'https://gis.krasn.ru/sc/api/1.0/projects/8/sites?key=' + key + '&&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=' + attribution.indicator_id[0] + '';
-
-    let Sites_Set_Regional = fetch(url_stationset_regionl);
-    let Sites_Set_KNC = fetch(url_stationset_knc);
-    let Sites_Set_Nebo = fetch(url_stationset_nebo);
-
-    Sites_Set_Regional = await Sites_Set_Regional.then(res => res.text());
-    Sites_Set_Regional = ParseText(Sites_Set_Regional);
-    Sites_Set_Regional = ParseXMLSites(Sites_Set_Regional);
-
-    Sites_Set_KNC = await Sites_Set_KNC.then(res => res.text());
-    Sites_Set_KNC = ParseText(Sites_Set_KNC);
-    Sites_Set_KNC = ParseXMLSites(Sites_Set_KNC);
-
-    Sites_Set_Nebo = await Sites_Set_Nebo.then(res => res.text());
-    Sites_Set_Nebo = ParseText(Sites_Set_Nebo);
-    Sites_Set_Nebo = ParseXMLSites(Sites_Set_Nebo);
-
-    document.getElementsByClassName('AirStationContent')[0].innerHTML = '';
-    document.getElementsByClassName('AirStationContent')[1].innerHTML = '';
-    document.getElementsByClassName('AirStationContent')[2].innerHTML = '';
-
-    for (let i = 0; i < Sites_Set_Regional.length; i++) {
-        document.getElementsByClassName('AirStationContent')[0].innerHTML += `<div><input type="checkbox" class="AirStationListItem" id="AirStation_${Sites_Set_Regional[i].id}" value="1"></input><label for="AirStation_${Sites_Set_Regional[i].id}">${Sites_Set_Regional[i].name}</label></div>`;
-    }
-    for (let i = 0; i < Sites_Set_KNC.length; i++) {
-        document.getElementsByClassName('AirStationContent')[1].innerHTML += `<div><input type="checkbox" class="AirStationListItem" id="AirStation_${Sites_Set_KNC[i].id}" value="9"></input><label for="AirStation_${Sites_Set_KNC[i].id}">${Sites_Set_KNC[i].name}</label></div>`;
-    }
-    for (let i = 0; i < Sites_Set_Nebo.length; i++) {
-        document.getElementsByClassName('AirStationContent')[2].innerHTML += `<div><input type="checkbox" class="AirStationListItem" id="AirStation_${Sites_Set_Nebo[i].id}" value="8"></input><label for="AirStation_${Sites_Set_Nebo[i].id}">${Sites_Set_Nebo[i].name}</label></div>`;
-    }
-
-    SitesFullList.push(...Sites_Set_Regional);
-    SitesFullList.push(...Sites_Set_KNC);
-    SitesFullList.push(...Sites_Set_Nebo);
-
-    return SitesFullList;
-}
-async function DownloadWind(Time, attribution) {
-    /* Ссылки */
-    const key = '654hblgm9gl8367h';
-    const url_wind_dir = 'https://gis.krasn.ru/sc/api/1.0/projects/1/aggvalues?s&key=' + key + '&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=101&time_interval=' + attribution.interval + '&limit=30000';
-    const url_wind_speed = 'https://gis.krasn.ru/sc/api/1.0/projects/1/aggvalues?&key=' + key + '&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=102&time_interval=' + attribution.interval + '&limit=30000';
-    const url_wind_speed_metar = 'https://gis.krasn.ru/sc/api/1.0/projects/10/aggvalues?&key=' + key + '&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=102&time_interval=' + attribution.interval + '&limit=30000';
-    const url_wind_dir_metar = 'https://gis.krasn.ru/sc/api/1.0/projects/10/aggvalues?s&key=' + key + '&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=101&time_interval=' + attribution.interval + '&limit=30000';
-    const url_wind_speed_ugms = 'https://gis.krasn.ru/sc/api/1.0/projects/5/aggvalues?&key=' + key + '&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=102&time_interval=' + attribution.interval + '&limit=30000';
-    const url_wind_dir_ugms = 'https://gis.krasn.ru/sc/api/1.0/projects/5/aggvalues?s&key=' + key + '&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=101&time_interval=' + attribution.interval + '&limit=30000';
-    const url_stationset = 'https://gis.krasn.ru/sc/api/1.0/projects/1/sites?key=' + key + '&&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=102';
-    const url_stationset_metar = 'https://gis.krasn.ru/sc/api/1.0/projects/10/sites?key=' + key + '&&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=102';
-    const url_stationset_ugms = 'https://gis.krasn.ru/sc/api/1.0/projects/5/sites?key=' + key + '&&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=102';
-
-    /* Посты */
-    const RawDataStations = fetch(url_stationset);
-    const RawDataStationsMETAR = fetch(url_stationset_metar);
-    const RawDataStationsUGMS = fetch(url_stationset_ugms);
-    const SitesSet = await RawDataStations.then(res => res.text()).then(res => ParseText(res)).then(res => ParseXMLSites(res));
-    const SitesSetMETAR = await RawDataStationsMETAR.then(res => res.text()).then(res => ParseText(res)).then(res => ParseXMLSites(res));
-    const SitesSetUGMS = await RawDataStationsUGMS.then(res => res.text()).then(res => ParseText(res)).then(res => ParseXMLSites(res));
-    SitesSet.push(...SitesSetMETAR);
-    SitesSet.push(...SitesSetUGMS);
-    /* Данные */
-    const RawDataWindSpeed = fetch(url_wind_speed);
-    const RawDataWindDirection = fetch(url_wind_dir);
-    const RawDataWindSpeedMETAR = fetch(url_wind_speed_metar);
-    const RawDataWindDirectionMETAR = fetch(url_wind_dir_metar);
-    const RawDataWindSpeedUGMS = fetch(url_wind_speed_ugms);
-    const RawDataWindDirectionUGMS = fetch(url_wind_dir_ugms);
-    /* Обработаныне данные */
-    const WindSpeed = await RawDataWindSpeed.then(res => res.text()).then(res => ParseText(res)).then(res => ParseXMLDataForLayer(res, Time, 1));
-    const WindDirection = await RawDataWindDirection.then(res => res.text()).then(res => ParseText(res)).then(res => ParseXMLDataForLayer(res, Time, 1));
-    const WindSpeedMETAR = await RawDataWindSpeedMETAR.then(res => res.text()).then(res => ParseText(res)).then(res => ParseXMLDataForLayer(res, Time, 1));
-    const WindDirectionMETAR = await RawDataWindDirectionMETAR.then(res => res.text()).then(res => ParseText(res)).then(res => ParseXMLDataForLayer(res, Time, 1));
-    const WindSpeedUGMS = await RawDataWindSpeedUGMS.then(res => res.text()).then(res => ParseText(res)).then(res => ParseXMLDataForLayer(res, Time, 1));
-    const WindDirectionUGMS = await RawDataWindDirectionUGMS.then(res => res.text()).then(res => ParseText(res)).then(res => ParseXMLDataForLayer(res, Time, 1));
-
-    WindSpeed.push(...WindSpeedMETAR);
-    WindDirection.push(...WindDirectionMETAR);
-    WindSpeed.push(...WindSpeedUGMS);
-    WindDirection.push(...WindDirectionUGMS);
-
-    for (let i = 0; i < WindSpeed.length; i++) {
-        for (let j = 0; j < WindSpeed.length; j++) {
-            if (WindSpeed[i].time === WindSpeed[j].time && i != j) {
-                for (let k = 0; k < WindSpeed[j].values.length; k++) {
-                    WindSpeed[i].values.push(WindSpeed[j].values[k]);
-                    WindDirection[i].values.push(WindDirection[j].values[k]);
-                }
-                WindSpeed.splice(j, 1);
-                WindDirection.splice(j, 1);
-            }
-        }
-    }
-
-    return {
-        SitesSet,
-        WindSpeed,
-        WindDirection
+      time: e,
+      values: [],
     };
+  });
+  for (let i = 0; i < ListStation.length; i++) {
+    for (let j = 0; j < ListStation[i].length; j++) {
+      const layerID = attribution.layerID != 0 ? attribution.layerID : attribution.indicator_id[0];
+      const url_dataset =
+        "https://sensor.krasn.ru/sc/api/1.0/projects/" +
+        ListStation[i][j].project +
+        "/aggvalues?sites=" +
+        ListStation[i][j].id +
+        "& key=paaqyrklx1d1ehik&time_begin=" +
+        attribution.day_one +
+        "&time_end=" +
+        attribution.day_two +
+        "&indicators=" +
+        layerID +
+        "&time_interval=" +
+        attribution.interval +
+        "&limit=300000";
+      const RawData = fetch(url_dataset);
+      const Data = await RawData.then((res) => res.text()).then((res) => ParseText(res));
+      const Graph = ParseXMLDataForGraph(Data, SitesList, layerID);
+      const Layer = await ParseXMLDataForLayer(Data, Time, ListStation[i][j].project);
+      for (let k = 0; k < Layer.length; k++) {
+        for (let q = 0; q < DataForLayer.length; q++) {
+          if (Layer[k].time == DataForLayer[q].time) {
+            DataForLayer[q].values.push(...Layer[k].values);
+          }
+        }
+      }
+
+      DataForGraph.push(...(await Graph));
+    }
+  }
+  let WindSpeed = await RawWindSpeed.then((res) => res.text()).then((res) => ParseText(res));
+  let WindDirection = await RawWindDirection.then((res) => res.text()).then((res) => ParseText(res));
+  WindSpeed = ParseXMLOne(WindSpeed);
+  WindDirection = ParseXMLOne(WindDirection);
+  return {
+    DataForGraph,
+    DataForLayer,
+    DataSites: SitesList,
+    WindSpeed: await WindSpeed,
+    WindDirection: await WindDirection,
+  };
 }
+
+async function DownloadSitesList() {
+  let attribution = GetAttributes();
+  const key = "654hblgm9gl8367h";
+  const SitesFullList = [];
+  const url_stationset_regionl =
+    "https://sensor.krasn.ru/sc/api/1.0/projects/1/sites?key=" +
+    key +
+    "&&time_begin=" +
+    attribution.day_one +
+    "&time_end=" +
+    attribution.day_two +
+    "&indicators=" +
+    attribution.indicator_id[0] +
+    "";
+  const url_stationset_knc =
+    "https://sensor.krasn.ru/sc/api/1.0/projects/9/sites?key=" +
+    key +
+    "&&time_begin=" +
+    attribution.day_one +
+    "&time_end=" +
+    attribution.day_two +
+    "&indicators=" +
+    attribution.indicator_id[0] +
+    "";
+  const url_stationset_nebo =
+    "https://sensor.krasn.ru/sc/api/1.0/projects/8/sites?key=" +
+    key +
+    "&&time_begin=" +
+    attribution.day_one +
+    "&time_end=" +
+    attribution.day_two +
+    "&indicators=" +
+    attribution.indicator_id[0] +
+    "";
+
+  let Sites_Set_Regional = fetch(url_stationset_regionl);
+  let Sites_Set_KNC = fetch(url_stationset_knc);
+  let Sites_Set_Nebo = fetch(url_stationset_nebo);
+
+  Sites_Set_Regional = await Sites_Set_Regional.then((res) => res.text());
+  Sites_Set_Regional = ParseText(Sites_Set_Regional);
+  Sites_Set_Regional = ParseXMLSites(Sites_Set_Regional);
+
+  Sites_Set_KNC = await Sites_Set_KNC.then((res) => res.text());
+  Sites_Set_KNC = ParseText(Sites_Set_KNC);
+  Sites_Set_KNC = ParseXMLSites(Sites_Set_KNC);
+
+  Sites_Set_Nebo = await Sites_Set_Nebo.then((res) => res.text());
+  Sites_Set_Nebo = ParseText(Sites_Set_Nebo);
+  Sites_Set_Nebo = ParseXMLSites(Sites_Set_Nebo);
+
+  document.getElementsByClassName("AirStationContent")[0].innerHTML = "";
+  document.getElementsByClassName("AirStationContent")[1].innerHTML = "";
+  document.getElementsByClassName("AirStationContent")[2].innerHTML = "";
+
+  for (let i = 0; i < Sites_Set_Regional.length; i++) {
+    document.getElementsByClassName(
+      "AirStationContent"
+    )[0].innerHTML += `<div><input type="checkbox" class="AirStationListItem" id="AirStation_${Sites_Set_Regional[i].id}" value="1"></input><label for="AirStation_${Sites_Set_Regional[i].id}">${Sites_Set_Regional[i].name}</label></div>`;
+  }
+  for (let i = 0; i < Sites_Set_KNC.length; i++) {
+    document.getElementsByClassName(
+      "AirStationContent"
+    )[1].innerHTML += `<div><input type="checkbox" class="AirStationListItem" id="AirStation_${Sites_Set_KNC[i].id}" value="9"></input><label for="AirStation_${Sites_Set_KNC[i].id}">${Sites_Set_KNC[i].name}</label></div>`;
+  }
+  for (let i = 0; i < Sites_Set_Nebo.length; i++) {
+    document.getElementsByClassName(
+      "AirStationContent"
+    )[2].innerHTML += `<div><input type="checkbox" class="AirStationListItem" id="AirStation_${Sites_Set_Nebo[i].id}" value="8"></input><label for="AirStation_${Sites_Set_Nebo[i].id}">${Sites_Set_Nebo[i].name}</label></div>`;
+  }
+
+  SitesFullList.push(...Sites_Set_Regional);
+  SitesFullList.push(...Sites_Set_KNC);
+  SitesFullList.push(...Sites_Set_Nebo);
+
+  return SitesFullList;
+}
+
+async function DownloadWind(Time, attribution) {
+  /* Ссылки */
+  const key = "654hblgm9gl8367h";
+  const url_wind_dir =
+    "https://sensor.krasn.ru/sc/api/1.0/projects/1/aggvalues?s&key=" +
+    key +
+    "&time_begin=" +
+    attribution.day_one +
+    "&time_end=" +
+    attribution.day_two +
+    "&indicators=101&time_interval=" +
+    attribution.interval +
+    "&limit=30000";
+  const url_wind_speed =
+    "https://sensor.krasn.ru/sc/api/1.0/projects/1/aggvalues?&key=" +
+    key +
+    "&time_begin=" +
+    attribution.day_one +
+    "&time_end=" +
+    attribution.day_two +
+    "&indicators=102&time_interval=" +
+    attribution.interval +
+    "&limit=30000";
+  const url_wind_speed_metar =
+    "https://sensor.krasn.ru/sc/api/1.0/projects/10/aggvalues?&key=" +
+    key +
+    "&time_begin=" +
+    attribution.day_one +
+    "&time_end=" +
+    attribution.day_two +
+    "&indicators=102&time_interval=" +
+    attribution.interval +
+    "&limit=30000";
+  const url_wind_dir_metar =
+    "https://sensor.krasn.ru/sc/api/1.0/projects/10/aggvalues?s&key=" +
+    key +
+    "&time_begin=" +
+    attribution.day_one +
+    "&time_end=" +
+    attribution.day_two +
+    "&indicators=101&time_interval=" +
+    attribution.interval +
+    "&limit=30000";
+  const url_wind_speed_ugms =
+    "https://sensor.krasn.ru/sc/api/1.0/projects/5/aggvalues?&key=" +
+    key +
+    "&time_begin=" +
+    attribution.day_one +
+    "&time_end=" +
+    attribution.day_two +
+    "&indicators=102&time_interval=" +
+    attribution.interval +
+    "&limit=30000";
+  const url_wind_dir_ugms =
+    "https://sensor.krasn.ru/sc/api/1.0/projects/5/aggvalues?s&key=" +
+    key +
+    "&time_begin=" +
+    attribution.day_one +
+    "&time_end=" +
+    attribution.day_two +
+    "&indicators=101&time_interval=" +
+    attribution.interval +
+    "&limit=30000";
+  const url_stationset =
+    "https://sensor.krasn.ru/sc/api/1.0/projects/1/sites?key=" + key + "&&time_begin=" + attribution.day_one + "&time_end=" + attribution.day_two + "&indicators=102";
+  const url_stationset_metar =
+    "https://sensor.krasn.ru/sc/api/1.0/projects/10/sites?key=" + key + "&&time_begin=" + attribution.day_one + "&time_end=" + attribution.day_two + "&indicators=102";
+  const url_stationset_ugms =
+    "https://sensor.krasn.ru/sc/api/1.0/projects/5/sites?key=" + key + "&&time_begin=" + attribution.day_one + "&time_end=" + attribution.day_two + "&indicators=102";
+
+  /* Посты */
+  const RawDataStations = fetch(url_stationset);
+  const RawDataStationsMETAR = fetch(url_stationset_metar);
+  const RawDataStationsUGMS = fetch(url_stationset_ugms);
+  const SitesSet = await RawDataStations.then((res) => res.text())
+    .then((res) => ParseText(res))
+    .then((res) => ParseXMLSites(res));
+  const SitesSetMETAR = await RawDataStationsMETAR.then((res) => res.text())
+    .then((res) => ParseText(res))
+    .then((res) => ParseXMLSites(res));
+  const SitesSetUGMS = await RawDataStationsUGMS.then((res) => res.text())
+    .then((res) => ParseText(res))
+    .then((res) => ParseXMLSites(res));
+  SitesSet.push(...SitesSetMETAR);
+  SitesSet.push(...SitesSetUGMS);
+  /* Данные */
+  const RawDataWindSpeed = fetch(url_wind_speed);
+  const RawDataWindDirection = fetch(url_wind_dir);
+  const RawDataWindSpeedMETAR = fetch(url_wind_speed_metar);
+  const RawDataWindDirectionMETAR = fetch(url_wind_dir_metar);
+  const RawDataWindSpeedUGMS = fetch(url_wind_speed_ugms);
+  const RawDataWindDirectionUGMS = fetch(url_wind_dir_ugms);
+  /* Обработаныне данные */
+  const WindSpeed = await RawDataWindSpeed.then((res) => res.text())
+    .then((res) => ParseText(res))
+    .then((res) => ParseXMLDataForLayer(res, Time, 1));
+  const WindDirection = await RawDataWindDirection.then((res) => res.text())
+    .then((res) => ParseText(res))
+    .then((res) => ParseXMLDataForLayer(res, Time, 1));
+  const WindSpeedMETAR = await RawDataWindSpeedMETAR.then((res) => res.text())
+    .then((res) => ParseText(res))
+    .then((res) => ParseXMLDataForLayer(res, Time, 1));
+  const WindDirectionMETAR = await RawDataWindDirectionMETAR.then((res) => res.text())
+    .then((res) => ParseText(res))
+    .then((res) => ParseXMLDataForLayer(res, Time, 1));
+  const WindSpeedUGMS = await RawDataWindSpeedUGMS.then((res) => res.text())
+    .then((res) => ParseText(res))
+    .then((res) => ParseXMLDataForLayer(res, Time, 1));
+  const WindDirectionUGMS = await RawDataWindDirectionUGMS.then((res) => res.text())
+    .then((res) => ParseText(res))
+    .then((res) => ParseXMLDataForLayer(res, Time, 1));
+
+  WindSpeed.push(...WindSpeedMETAR);
+  WindDirection.push(...WindDirectionMETAR);
+  WindSpeed.push(...WindSpeedUGMS);
+  WindDirection.push(...WindDirectionUGMS);
+
+  for (let i = 0; i < WindSpeed.length; i++) {
+    for (let j = 0; j < WindSpeed.length; j++) {
+      if (WindSpeed[i].time === WindSpeed[j].time && i != j) {
+        for (let k = 0; k < WindSpeed[j].values.length; k++) {
+          WindSpeed[i].values.push(WindSpeed[j].values[k]);
+          WindDirection[i].values.push(WindDirection[j].values[k]);
+        }
+        WindSpeed.splice(j, 1);
+        WindDirection.splice(j, 1);
+      }
+    }
+  }
+
+  return {
+    SitesSet,
+    WindSpeed,
+    WindDirection,
+  };
+}
+
 async function DownloadWindFromVantage(Time, attribution) {
-    const key = '654hblgm9gl8367h';
-    const url_wind_dir = 'https://gis.krasn.ru/sc/api/1.0/projects/6/aggvalues?s&key=' + key + '&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=101&time_interval=' + attribution.interval + '&limit=30000';
-    const url_wind_speed = 'https://gis.krasn.ru/sc/api/1.0/projects/6/aggvalues?&key=' + key + '&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=102&time_interval=' + attribution.interval + '&limit=30000';
-    const url_wind_rapid = 'https://gis.krasn.ru/sc/api/1.0/projects/6/aggvalues?&key=' + key + '&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=369&time_interval=' + attribution.interval + '&limit=30000';
+  const key = "654hblgm9gl8367h";
+  const url_wind_dir =
+    "https://sensor.krasn.ru/sc/api/1.0/projects/6/aggvalues?s&key=" +
+    key +
+    "&time_begin=" +
+    attribution.day_one +
+    "&time_end=" +
+    attribution.day_two +
+    "&indicators=101&time_interval=" +
+    attribution.interval +
+    "&limit=30000";
+  const url_wind_speed =
+    "https://sensor.krasn.ru/sc/api/1.0/projects/6/aggvalues?&key=" +
+    key +
+    "&time_begin=" +
+    attribution.day_one +
+    "&time_end=" +
+    attribution.day_two +
+    "&indicators=102&time_interval=" +
+    attribution.interval +
+    "&limit=30000";
+  const url_wind_rapid =
+    "https://sensor.krasn.ru/sc/api/1.0/projects/6/aggvalues?&key=" +
+    key +
+    "&time_begin=" +
+    attribution.day_one +
+    "&time_end=" +
+    attribution.day_two +
+    "&indicators=369&time_interval=" +
+    attribution.interval +
+    "";
 
-    const RawDataWindSpeed = fetch(url_wind_speed);
-    const RawDataWindDirection = fetch(url_wind_dir);
-    const RawDataWindRapid = fetch(url_wind_rapid);
+  const RawDataWindSpeed = fetch(url_wind_speed);
+  const RawDataWindDirection = fetch(url_wind_dir);
+  const RawDataWindRapid = fetch(url_wind_rapid);
 
-    const WindSpeed = await RawDataWindSpeed.then(res => res.text()).then(res => ParseText(res)).then(res => ParseXMLOne(res));
-    const WindDirection = await RawDataWindDirection.then(res => res.text()).then(res => ParseText(res)).then(res => ParseXMLOne(res));
-    const WindRapid = await RawDataWindRapid.then(res => res.text()).then(res => ParseText(res)).then(res => ParseXMLOne(res));
+  const WindSpeed = await RawDataWindSpeed.then((res) => res.text())
+    .then((res) => ParseText(res))
+    .then((res) => ParseXMLOne(res));
+  const WindDirection = await RawDataWindDirection.then((res) => res.text())
+    .then((res) => ParseText(res))
+    .then((res) => ParseXMLOne(res));
+  const WindRapid = await RawDataWindRapid.then((res) => res.text())
+    .then((res) => ParseText(res))
+    .then((res) => ParseXMLOne(res));
 
-    return {
-        WindSpeed,
-        WindDirection,
-        WindRapid
-    }
+  return {
+    WindSpeed,
+    WindDirection,
+    WindRapid,
+  };
 }
+
 async function DownLoadMultiIndicator(turn) {
-    const DataSet = [];
-    for (let e in turn) {
+  const DataSet = [];
+  for (let e in turn) {
+    const id = turn[e].id;
+    const name = turn[e].name;
+    const project = turn[e].project;
 
-        const id = turn[e].id;
-        const name = turn[e].name;
-        const project = turn[e].project;
+    const key = "654hblgm9gl8367h";
+    const attribution = GetAttributes();
+    const Indicators = attribution.indicator_id;
+    const IndicatorsName = attribution.indicator_name;
+    const PromiseData = [];
 
-        const key = '654hblgm9gl8367h';
-        const attribution = GetAttributes();
-        const Indicators = attribution.indicator_id;
-        const IndicatorsName = attribution.indicator_name;
-        const PromiseData = [];
-
-        for (let i = 0; i < Indicators.length; i++) {
-            const url_dataset = 'https://gis.krasn.ru/sc/api/1.0/projects/' + project + '/aggvalues?sites=' + id + '&key=' + key + '&time_begin=' + attribution.day_one + '&time_end=' + attribution.day_two + '&indicators=' + Indicators[i] + '&time_interval=' + attribution.interval + '&limit=300000';
-            PromiseData.push(fetch(url_dataset).then(res => res.text()).then(res => ParseText(res)).then(res => ParseXMLOneForChart(res, Indicators[i])));
-        }
-
-        for (let i = 0; i < PromiseData.length; i++) {
-            const DataForInterface = await PromiseData[i];
-            DataSet.push(
-                {
-                    key: name + ' ' + IndicatorsName[i],
-                    type: 'line',
-                    yAxis: (i % 2) + 1,
-                    color: (i % 2 == 0) ? 'rgba(20,120,251, 1)' : 'rgba(102,0,153,1)',
-                    values: DataForInterface
-                });
-        }
+    for (let i = 0; i < Indicators.length; i++) {
+      const url_dataset =
+        "https://sensor.krasn.ru/sc/api/1.0/projects/" +
+        project +
+        "/aggvalues?sites=" +
+        id +
+        "&key=" +
+        key +
+        "&time_begin=" +
+        attribution.day_one +
+        "&time_end=" +
+        attribution.day_two +
+        "&indicators=" +
+        Indicators[i] +
+        "&time_interval=" +
+        attribution.interval +
+        "&limit=300000";
+      PromiseData.push(
+        fetch(url_dataset)
+          .then((res) => res.text())
+          .then((res) => ParseText(res))
+          .then((res) => ParseXMLOneForChart(res, Indicators[i]))
+      );
     }
 
-    return DataSet;
+    for (let i = 0; i < PromiseData.length; i++) {
+      const DataForInterface = await PromiseData[i];
+      DataSet.push({
+        key: name + " " + IndicatorsName[i],
+        type: "line",
+        yAxis: (i % 2) + 1,
+        color: i % 2 == 0 ? "rgba(20,120,251, 1)" : "rgba(102,0,153,1)",
+        values: DataForInterface,
+      });
+    }
+  }
+
+  return DataSet;
 }
 
 function CreateLineWithFocusChart() {
@@ -803,331 +1044,355 @@ CreateDiv();
 /* Карта */
 let ctrlDown = false;
 let turn = [];
-let container = document.getElementById('popup');
-let content = document.getElementById('popup-content');
+let container = document.getElementById("popup");
+let content = document.getElementById("popup-content");
 /* Прекрасный способ отображения popup */
 let overlay = new ol.Overlay({
-    element: container,
-    autoPan: true,
-    autoPanAnimation: {
-        duration: 1
-    }
+  element: container,
+  autoPan: true,
+  autoPanAnimation: {
+    duration: 1,
+  },
 });
 /* Подложка */
 let grayOsmLayer = new ol.layer.Tile({
-    source: new ol.source.XYZ({
-        url: 'https://tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png'
-    }),
+  source: new ol.source.OSM(),
 });
 /* Настройки карты */
 let map = new ol.Map({
-    target: 'map',
-    overlays: [overlay],
-    controls: ol.control.defaults({
-        attribution: false,
-        zoom: false,
-    }),
-    layers: [
-        grayOsmLayer
-    ],
-    view: new ol.View({
-        center: ol.proj.transform([92.865433, 56.029337], 'EPSG:4326', 'EPSG:3857'),
-        zoom: 11,
-        minZoom: 10.5,
-        maxZoom: 13
-    })
+  target: "map",
+  overlays: [overlay],
+  controls: ol.control.defaults({
+    attribution: false,
+    zoom: false,
+  }),
+  layers: [grayOsmLayer],
+  view: new ol.View({
+    center: ol.proj.transform([92.865433, 56.029337], "EPSG:4326", "EPSG:3857"),
+    zoom: 11,
+    minZoom: 10.5,
+    maxZoom: 13,
+  }),
 });
 
 let target = map.getTarget();
 let jTarget = typeof target === "string" ? $("#" + target) : $(target);
 
-map.on('pointermove', function (evt) {
-    var feature = map.forEachFeatureAtPixel(evt.pixel,
-        function (feature) {
-            return feature;
-        });
-    if (feature) {
-        if (feature.values_.type == 'monitoring post') {
-            jTarget.css("cursor", "pointer");
-            var coordinate = evt.coordinate;
-            var name = feature.values_.name;
-            content.innerHTML = name;
-            overlay.setPosition(coordinate);
-            jTarget.css("cursor", "pointer");
-        }
-        else {
-            overlay.setPosition(undefined);
-            jTarget.css("cursor", "context-menu");
-            return false;
-        }
+map.on("pointermove", function (evt) {
+  var feature = map.forEachFeatureAtPixel(evt.pixel, function (feature) {
+    return feature;
+  });
+  if (feature) {
+    if (feature.values_.type == "monitoring post") {
+      jTarget.css("cursor", "pointer");
+      var coordinate = evt.coordinate;
+      var name = feature.values_.name;
+      content.innerHTML = name;
+      overlay.setPosition(coordinate);
+      jTarget.css("cursor", "pointer");
     } else {
-        overlay.setPosition(undefined);
-        jTarget.css("cursor", "context-menu");
-        return false;
-
+      overlay.setPosition(undefined);
+      jTarget.css("cursor", "context-menu");
+      return false;
     }
+  } else {
+    overlay.setPosition(undefined);
+    jTarget.css("cursor", "context-menu");
+    return false;
+  }
 });
 
-map.on('click', function (evt) {
-    var feature = map.forEachFeatureAtPixel(evt.pixel,
-        function (feature) {
-            return feature;
+map.on("click", function (evt) {
+  var feature = map.forEachFeatureAtPixel(evt.pixel, function (feature) {
+    return feature;
+  });
+  if (feature) {
+    if (feature.values_.type == "monitoring post") {
+      if (ctrlDown == true) {
+        turn.push({
+          id: feature.values_.id,
+          name: feature.values_.name,
+          project: feature.values_.project,
         });
-    if (feature) {
-        if (feature.values_.type == 'monitoring post') {
-            if (ctrlDown == true) {
+      }
 
-                turn.push(
-                    {
-                        id: feature.values_.id,
-                        name: feature.values_.name,
-                        project: feature.values_.project
-                    }
-                );
-            }
-
-            if (ctrlDown == false) {
-                if ($('#collapseChartOne')[0].className.indexOf('show') == -1 && $('#collapseChartTwo')[0].className.indexOf('show') == -1) {
-                    CloseOpenChart();
-                    $('#collapseChartOne').collapse('show');
-                }
-                let legend = d3.select('#chart svg').selectAll('g.nv-series');
-                if (legend[0].length != 0) {
-                    for (let i = 0; i < legend["0"].parentNode.__data__.length; i++) {
-                        if (legend["0"][i].__data__.key == feature.values_.name && legend["0"][i].style) {
-                            legend["0"][i].__data__.disabled = false;
-                            for (let j = 0; j < legend["0"].parentNode.__data__.length; j++) {
-                                if (j != i) {
-                                    legend["0"][j].__data__.disabled = true;
-                                }
-                            }
-                        }
-                    }
-                    nv.utils.windowResize(MainChart.update());
-                }
-            }
-            return feature;
+      if (ctrlDown == false) {
+        if ($("#collapseChartOne")[0].className.indexOf("show") == -1 && $("#collapseChartTwo")[0].className.indexOf("show") == -1) {
+          CloseOpenChart();
+          $("#collapseChartOne").collapse("show");
         }
+        let legend = d3.select("#chart svg").selectAll("g.nv-series");
+        if (legend[0].length != 0) {
+          for (let i = 0; i < legend["0"].parentNode.__data__.length; i++) {
+            if (legend["0"][i].__data__.key == feature.values_.name && legend["0"][i].style) {
+              legend["0"][i].__data__.disabled = false;
+              for (let j = 0; j < legend["0"].parentNode.__data__.length; j++) {
+                if (j != i) {
+                  legend["0"][j].__data__.disabled = true;
+                }
+              }
+            }
+          }
+          nv.utils.windowResize(MainChart.update());
+        }
+      }
+      return feature;
     }
-    else {
-        overlay.setPosition(undefined);
-    }
+  } else {
+    overlay.setPosition(undefined);
+  }
 });
 
 /* Popup */
 function CreateDiv() {
-    let div = document.createElement("div");
-    div.className = "ol-popup";
-    div.id = "popup";
-    document.body.appendChild(div);
-    let divcontent = document.createElement("div");
-    divcontent.id = "popup-content";
-    document.getElementById("popup").appendChild(divcontent);
-    document.getElementById("popup").innerHTML += '<svg></svg>';
+  let div = document.createElement("div");
+  div.className = "ol-popup";
+  div.id = "popup";
+  document.body.appendChild(div);
+  let divcontent = document.createElement("div");
+  divcontent.id = "popup-content";
+  document.getElementById("popup").appendChild(divcontent);
+  document.getElementById("popup").innerHTML += "<svg></svg>";
 }
+
 async function LayerUpdate(data, attribution) {
-    const id = attribution.layerID ? attribution.layerID : attribution.indicator_id[0];
-    const range = GetRange(id);
-    const dots = [];
-    let remove = [];
-    map.getLayers().forEach(function (layer) {
-        if (layer.values_.name != 'Wind')
-            remove.push(layer);
-    });
-    for (let i = 1, len = remove.length; i < len; i++)
-        map.removeLayer(remove[i]);
+  const id = attribution.layerID ? attribution.layerID : attribution.indicator_id[0];
+  const range = GetRange(id);
+  const dots = [];
+  let remove = [];
+  map.getLayers().forEach(function (layer) {
+    if (layer.values_.name != "Wind") remove.push(layer);
+  });
+  for (let i = 1, len = remove.length; i < len; i++) map.removeLayer(remove[i]);
 
+  let iconFeatures = [];
+  for (let i = 0; i < data.length; i++) {
+    if (data[i].name != undefined) {
+      let x = +data[i].x;
+      let y = +data[i].y;
+      let color = GetColorScheme("dots", id, range, data[i].value.toFixed(4));
+      let text = `${data[i].value.toFixed(1)}`;
+      if (id == 348) {
+        color = GetColorScheme("dots", id, range, (data[i].value * 1000).toFixed(1));
+        text = `${(data[i].value * 1000).toFixed(1)}`;
+      }
+      const svg =
+        '<svg width="120" height="120" version="1.1" xmlns="http://www.w3.org/2000/svg">' +
+        '<circle cx="60" cy="30" r="30" stroke-width="1" stroke="' +
+        color +
+        '" fill="' +
+        color +
+        '"/>' +
+        '<circle cx="60" cy="30" r="20" stroke-width="1" stroke="white" fill="white"/>' +
+        '<polygon points="45,55 75,55 60,70" fill="' +
+        color +
+        '" stroke="' +
+        color +
+        '" stroke-width="5" />' +
+        "</svg>";
+
+      iconFeatures.push(
+        new ol.Feature({
+          name: data[i].name,
+          id: data[i].id,
+          project: data[i].project,
+          value: data[i].value,
+          type: "monitoring post",
+          typeChartMode: attribution.indicator_id.length == 1 ? 0 : 1,
+          geometry: new ol.geom.Point(ol.proj.transform([x, y], "EPSG:4326", "EPSG:3857")),
+        })
+      );
+
+      iconFeatures[i].setStyle(
+        new ol.style.Style({
+          image: new ol.style.Icon({
+            opacity: 1,
+            src: "data:image/svg+xml;utf8," + svg,
+            scale: 0.65,
+            color: color,
+          }),
+          text: new ol.style.Text({
+            font: "bold 12px arial",
+            text: text,
+            offsetY: -18,
+            fill: new ol.style.Fill({ color: "white", width: 2 }),
+          }),
+        })
+      );
+      if (id == 348) {
+        dots.push([+y, +x, +(data[i].value * 1000).toFixed(1)]);
+      } else {
+        dots.push([+y, +x, +data[i].value.toFixed(4)]);
+      }
+    }
+  }
+
+  let vectorSource = new ol.source.Vector({
+    features: iconFeatures,
+  });
+
+  let vectorLayer = new ol.layer.Vector({
+    source: vectorSource,
+    zIndex: 1,
+  });
+
+  map.addLayer(vectorLayer);
+
+  const isolines = document.getElementById("AirIsolines").checked;
+  if (isolines) {
+    let vectorLayerPoligons = await Isolines(dots, RangeConversionMainPoint(range, 0), attribution);
+    map.addLayer(vectorLayerPoligons);
+  }
+}
+
+async function LayerUpdateWind(speed, direction) {
+  let remove = [];
+  map.getLayers().forEach(function (layer) {
+    if (layer.values_.name == "Wind") remove.push(layer);
+  });
+  for (let i = 0, len = remove.length; i < len; i++) map.removeLayer(remove[i]);
+
+  const checked = document.getElementById("AirWind").checked;
+
+  if (checked) {
     let iconFeatures = [];
-    for (let i = 0; i < data.length; i++) {
-        if (data[i].name != undefined) {
-            let x = +data[i].x;
-            let y = +data[i].y;
-            let color = GetColorScheme('dots', id, range, data[i].value.toFixed(4));
-            let text = `${data[i].value.toFixed(1)}`;
-            if (id == 348) {
-                color = GetColorScheme('dots', id, range, (data[i].value * 1000).toFixed(1));
-                text = `${(data[i].value * 1000).toFixed(1)}`;
-            }
-            const svg = '<svg width="120" height="120" version="1.1" xmlns="http://www.w3.org/2000/svg">'
-                + '<circle cx="60" cy="30" r="30" stroke-width="1" stroke="' + color + '" fill="' + color + '"/>'
-                + '<circle cx="60" cy="30" r="20" stroke-width="1" stroke="white" fill="white"/>'
-                + '<polygon points="45,55 75,55 60,70" fill="' + color + '" stroke="' + color + '" stroke-width="5" />'
-                + '</svg>';
+    const id = 102;
+    const range = [0, 0.5, 2, 4, 6, 20];
+    for (let i = 0; i < speed.length; i++) {
+      let x = +speed[i].x;
+      let y = +speed[i].y;
+      let color = GetColorScheme("dots", id, range, speed[i].value.toFixed(0));
+      let text = `${speed[i].value.toFixed(0)}`;
 
-            iconFeatures.push(new ol.Feature({
-                name: data[i].name,
-                id: data[i].id,
-                project: data[i].project,
-                value: data[i].value,
-                type: 'monitoring post',
-                typeChartMode: (attribution.indicator_id.length == 1) ? 0 : 1,
-                geometry: new ol.geom.Point(ol.proj.transform([x, y], 'EPSG:4326',
-                    'EPSG:3857')),
-            }));
+      const svg =
+        '<svg width="120" height="120" version="1.1" xmlns="http://www.w3.org/2000/svg">' +
+        '<circle cx="60" cy="60" r="30" stroke-width="1" stroke="' +
+        color +
+        '" fill="' +
+        color +
+        '"/>' +
+        '<circle cx="60" cy="60" r="20" stroke-width="1" stroke="white" fill="white"/>' +
+        '<polygon points="45,86 75,86 60,105" fill="' +
+        color +
+        '" stroke="' +
+        color +
+        '" stroke-width="5" style="transform: rotate(' +
+        direction[i].value +
+        'deg);transform-origin: 50% 50%;" />' +
+        "</svg>";
 
-            iconFeatures[i].setStyle(new ol.style.Style({
-                image: new ol.style.Icon(({
-                    opacity: 1,
-                    src: 'data:image/svg+xml;utf8,' + svg,
-                    scale: 0.65,
-                    color: color
-                })),
-                text: new ol.style.Text({
-                    font: 'bold 12px arial',
-                    text: text,
-                    offsetY: -18,
-                    fill: new ol.style.Fill({ color: 'white', width: 2 }),
-                })
-            }));
-            if (id == 348) {
-                dots.push([+y, +x, +(data[i].value * 1000).toFixed(1)]);
-            }
-            else {
-                dots.push([+y, +x, +(data[i].value).toFixed(4)]);
-            }
-
-        }
+      iconFeatures.push(
+        new ol.Feature({
+          name: speed[i].name,
+          id: speed[i].id,
+          project: speed[i].project,
+          value: speed[i].value,
+          type: "wind post",
+          geometry: new ol.geom.Point(ol.proj.transform([x, y], "EPSG:4326", "EPSG:3857")),
+        })
+      );
+      iconFeatures[i].setStyle(
+        new ol.style.Style({
+          image: new ol.style.Icon({
+            opacity: 1,
+            src: "data:image/svg+xml;utf8," + svg,
+            scale: 0.65,
+            color: color,
+          }),
+          text: new ol.style.Text({
+            font: "bold 12px arial",
+            text: text,
+            offsetY: 0,
+            fill: new ol.style.Fill({ color: "black", width: 2 }),
+          }),
+        })
+      );
     }
     let vectorSource = new ol.source.Vector({
-        features: iconFeatures,
+      features: iconFeatures,
     });
 
     let vectorLayer = new ol.layer.Vector({
-        source: vectorSource,
-        zIndex: 1
+      source: vectorSource,
+      name: "Wind",
+      zIndex: 2,
     });
 
-     map.addLayer(vectorLayer); 
-
-    const isolines = document.getElementById('AirIsolines').checked;
-    if (isolines) {
-        let vectorLayerPoligons = await Isolines(dots, RangeConversionMainPoint(range, 0), attribution);
-        map.addLayer(vectorLayerPoligons);
-    }
-}
-async function LayerUpdateWind(speed, direction) {
-    let remove = [];
-    map.getLayers().forEach(function (layer) {
-        if (layer.values_.name == 'Wind')
-            remove.push(layer);
-    });
-    for (let i = 0, len = remove.length; i < len; i++)
-        map.removeLayer(remove[i]);
-
-    const checked = document.getElementById('AirWind').checked;
-
-    if (checked) {
-        let iconFeatures = [];
-        const id = 102;
-        const range = [0, 0.5, 2, 4, 6, 20];
-        for (let i = 0; i < speed.length; i++) {
-            let x = +speed[i].x;
-            let y = +speed[i].y;
-            let color = GetColorScheme('dots', id, range, speed[i].value.toFixed(0));
-            let text = `${speed[i].value.toFixed(0)}`;
-
-            const svg = '<svg width="120" height="120" version="1.1" xmlns="http://www.w3.org/2000/svg">'
-                + '<circle cx="60" cy="60" r="30" stroke-width="1" stroke="' + color + '" fill="' + color + '"/>'
-                + '<circle cx="60" cy="60" r="20" stroke-width="1" stroke="white" fill="white"/>'
-                + '<polygon points="45,86 75,86 60,105" fill="' + color + '" stroke="' + color + '" stroke-width="5" style="transform: rotate(' + direction[i].value + 'deg);transform-origin: 50% 50%;" />'
-                + '</svg>';
-
-            iconFeatures.push(new ol.Feature({
-                name: speed[i].name,
-                id: speed[i].id,
-                project: speed[i].project,
-                value: speed[i].value,
-                type: 'wind post',
-                geometry: new ol.geom.Point(ol.proj.transform([x, y], 'EPSG:4326',
-                    'EPSG:3857')),
-            }));
-            iconFeatures[i].setStyle(new ol.style.Style({
-                image: new ol.style.Icon(({
-                    opacity: 1,
-                    src: 'data:image/svg+xml;utf8,' + svg,
-                    scale: 0.65,
-                    color: color
-                })),
-                text: new ol.style.Text({
-                    font: 'bold 12px arial',
-                    text: text,
-                    offsetY: 0,
-                    fill: new ol.style.Fill({ color: 'black', width: 2 }),
-                })
-            }));
-        }        let vectorSource = new ol.source.Vector({
-            features: iconFeatures,
-        });
-
-        let vectorLayer = new ol.layer.Vector({
-            source: vectorSource,
-            name: 'Wind',
-            zIndex: 2
-        });
-
-        map.addLayer(vectorLayer);
-    }
+    map.addLayer(vectorLayer);
+  }
 }
 
 async function Isolines(dots, range, attribution) {
-    const indicator_id = attribution.layerID ? attribution.layerID : attribution.indicator_id[0];
-    const rangeForColor = RangeConversion(range);
-    const barrier = document.getElementById('AirBarriers').checked;
-    const colorGradient = GenerateColorMainPoint(GetColorScheme(0, indicator_id), 0);
-    let poligons;
-    if (barrier) {
-        const mask = dline.ascToArray(await fetch('krs_cut.asc').then(res => res.text()));
-        poligons = dline.isobands(dline.IDW(dots, 250, { bbox: [20, 20], units: ['meters', 'degrees'], mask, boundaries: [[+50, +0.2], [+100, +0.1]], exponent: 3 }), range);
-    }
-    else {
-        poligons = dline.isobands(dline.IDW(dots, 250, { bbox: [200, 200], units: ['meters', 'degrees'], exponent: 4 }), range);
-    }
-    let opacity = document.getElementById("opacityLayersChange").value;
+  const indicator_id = attribution.layerID ? attribution.layerID : attribution.indicator_id[0];
+  const rangeForColor = RangeConversion(range);
+  const barrier = document.getElementById("AirBarriers").checked;
+  const colorGradient = GenerateColorMainPoint(GetColorScheme(0, indicator_id), 0);
+  let poligons;
+  if (barrier) {
+    const mask = dline.ascToArray(await fetch("krs_cut.asc").then((res) => res.text()));
+    poligons = dline.isobands(
+      dline.IDW(dots, 250, {
+        bbox: [20, 20],
+        units: ["meters", "degrees"],
+        mask,
+        boundaries: [
+          [+50, +0.2],
+          [+100, +0.1],
+        ],
+        exponent: 3,
+      }),
+      range
+    );
+  } else {
+    poligons = dline.isobands(dline.IDW(dots, 250, { bbox: [200, 200], units: ["meters", "degrees"], exponent: 4 }), range);
+  }
+  let opacity = document.getElementById("opacityLayersChange").value;
 
-    let vectorSourceP = new ol.source.Vector({
-        features: (new ol.format.GeoJSON({
-            featureProjection: 'EPSG:3857',
-            dataProjection: 'EPSG:4326'
-        })).readFeatures(poligons)
-    });
-   
-    let vectorLayerP = new ol.layer.Vector({
-        source: vectorSourceP,
-        opacity: opacity
-    });
+  let vectorSourceP = new ol.source.Vector({
+    features: new ol.format.GeoJSON({
+      featureProjection: "EPSG:3857",
+      dataProjection: "EPSG:4326",
+    }).readFeatures(poligons),
+  });
 
-    vectorLayerP.set('name', 'polygons');
-    vectorLayerP.setStyle(function (i) {
-        const color = GetColorForPoligon(colorGradient, rangeForColor, i.values_.value);
-        return new ol.style.Style({
-            fill: new ol.style.Fill({ color: color }),
-            stroke: new ol.style.Stroke({ width: 0, color: color }),
-        });
+  let vectorLayerP = new ol.layer.Vector({
+    source: vectorSourceP,
+    opacity: opacity,
+  });
+
+  vectorLayerP.set("name", "polygons");
+  vectorLayerP.setStyle(function (i) {
+    const color = GetColorForPoligon(colorGradient, rangeForColor, i.values_.value);
+    return new ol.style.Style({
+      fill: new ol.style.Fill({ color: color }),
+      stroke: new ol.style.Stroke({ width: 0, color: color }),
     });
-    return vectorLayerP;
+  });
+  return vectorLayerP;
 }
-document.addEventListener('keydown', e => {
-    if (e.repeat == false && e.key == 'Control') {
-        turn = [];
-        ctrlDown = true;
-    }
+
+document.addEventListener("keydown", (e) => {
+  if (e.repeat == false && e.key == "Control") {
+    turn = [];
+    ctrlDown = true;
+  }
 });
 
-document.addEventListener('keyup', e => {
-    if (e.repeat == false && e.key == 'Control') {
-        ctrlDown = false;
-        DownLoadMultiIndicator(turn).then(e => {
-            if (e.length != 0) {
-                RefreshAdditionalChart(e, AdditionalChart);
-                const buttonOpen = document.getElementById('CloseOpenChartButton');
-                if (buttonOpen.innerText == 'Открыть график') {
-                    CloseOpenChart();
-                }
-                $('#collapseChartOne').collapse('hide');
-                $('#collapseChartTwo').collapse('show');
-            }
-        });
-    }
+document.addEventListener("keyup", (e) => {
+  if (e.repeat == false && e.key == "Control") {
+    ctrlDown = false;
+    DownLoadMultiIndicator(turn).then((e) => {
+      if (e.length != 0) {
+        RefreshAdditionalChart(e, AdditionalChart);
+        const buttonOpen = document.getElementById("CloseOpenChartButton");
+        if (buttonOpen.innerText == "Открыть график") {
+          CloseOpenChart();
+        }
+        $("#collapseChartOne").collapse("hide");
+        $("#collapseChartTwo").collapse("show");
+      }
+    });
+  }
 });
 
 async function WindInformation(data) {

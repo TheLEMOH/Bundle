@@ -13,6 +13,10 @@
   justify-items: center;
 }
 
+.GridFooter .card-body {
+  padding: 1rem;
+}
+
 .airMap {
   -webkit-user-select: none;
 }
@@ -91,7 +95,7 @@
 .ChartFooter {
   background-color: white;
   bottom: 40px;
-  width: 100%
+  width: 100%;
 }
 
 .MainBody {
@@ -186,7 +190,7 @@
   margin: 0px;
 }
 
-.AirStationContent input:checked+label {
+.AirStationContent input:checked + label {
   color: #055a81;
 }
 
